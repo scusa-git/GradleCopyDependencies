@@ -2,6 +2,7 @@
 /.classpath
 /.gradle/
 /.settings/
+/lib/
 /build/
 /bin/
 # Compiled class file
