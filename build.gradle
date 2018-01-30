@@ -1,0 +1,78 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+mainClassName = 'hello.HelloWorld'
+
+ext {
+	springVersion = "5.0.3.RELEASE"
+	vaadinVersion = "8.3.0"
+}
+
+// ---
+if (project.hasProperty('copyDependencies')) {
+    repositories {
+        mavenCentral()
+    }
+} else {
+    repositories { 
+    	flatDir { dirs 'lib' }
+    }
+}
+
+
+jar {
+	baseName='test'
+	version='0.1.0'
+	destinationDir=file('target')
+}
+
+war {
+	baseName='test'
+	version='0.1.0'
+	destinationDir=file('target')
+}
+
+
+dependencies {
+
+	compile "com.vaadin:vaadin-client-compiled:${vaadinVersion}"
+	compile "com.vaadin:vaadin-server:${vaadinVersion}"
+   	compile "com.vaadin:vaadin-themes:${vaadinVersion}"
+   	
+   	compile "com.vaadin:vaadin-spring:3.0.0"
+   	
+    compile "org.springframework:spring-beans:${springVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-core:${springVersion}"
+    compile "org.springframework:spring-expression:${springVersion}"
+    
+    compileOnly "javax:javaee-api:7.0"
+    compileOnly "javax.servlet:javax.servlet-api:3.1.0"
+    
+	compile "joda-time:joda-time:2.9.4"
+	compile "org.slf4j:slf4j-api:1.7.21"
+    
+    // Use JUnit test framework
+    testCompile 'junit:junit:4.12'
+}
+
+clean.doFirst {
+	delete 'target'
+}
+
+task cleanDependencies(type: Delete) {
+	delete fileTree(dir:'lib')
+}
+
+task copyDependencies(type: Copy, dependsOn: cleanDependencies) {
+   from configurations.compile
+   from configurations.compileOnly
+   from configurations.testCompile
+   into 'lib'
+}
